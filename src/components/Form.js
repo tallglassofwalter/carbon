@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Form = () => {
+class Form extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -17,11 +17,106 @@ const Form = () => {
     }
   }
 
+  handleErrors(res) {
+    if (res.statusText === 'No Content') {
+      return Promise.reject({
+        code: res.status,
+        message: res.statusText
+      });
+    } else {
+      return res.text();
+    }
+  }
+
+  handleChange(el, e) {
+    if (e.target.value) {
+      if (el === 'year') {
+        const year = e.target.value;
+        return fetch(`https://www.fueleconomy.gov/ws/rest/vehicle/menu/make?year=${year}`, { method: 'GET' })
+          .then((res) => this.handleErrors(res))
+          .then((res) => {
+            const data = new DOMParser().parseFromString(res, 'application/xml');
+            const make = [];
+
+            data.childNodes[0].childNodes.forEach((node) => {
+              make.push(node.childNodes[0].innerHTML);
+            });
+
+            this.setState({
+              selectedYear: year,
+              make,
+              selectedMake: null,
+              model: null,
+              selectedModel: null,
+              vehicle: null,
+              carbonFootprint: null,
+              error: null
+            });
+          })
+          .catch((err) => {
+            console.error(err);
+            this.setState({ error: 'This selection did not return any data.' });
+          })
+      } else if (el === 'make') {
+        console.log(e.target);
+      } else if (el === 'miles-driven') {
+        this.setState({ miles: e.target.value })
+      }
+    }
+
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+  }
+
   render() {
     return (
       <div>
-        <form>
-        <button disabled={this.state.selectedVehicleID === null}>Submit</button>
+        <form onSubmit={(e) => this.handleSubmit(e)}>
+          <h2>Calculate Carbon Footprint</h2>
+          <div className="form__error">{this.state.error}</div>
+          <fieldset>
+            <p>To calculate a vehicle's carbon footprint, enter the information below and click 'Submit.'</p>
+
+            <div className="form__select">
+              <label htmlFor="miles-driven">miles/year: </label>
+              <input
+                id="miles-driven"
+                type="number"
+                min="0"
+                onChange={(e) => this.handleChange('miles-driven', e)}
+                required
+              />
+            </div>
+
+            {
+              ['year', 'make', 'model'].map((el, i) => {
+                return (
+                  <div className="form__select" key={i}>
+                    <label for={el}>{el}: </label>
+                    <select
+                      name={el}
+                      id={el}
+                      disabled={this.state[el] === null}
+                      onChange={(e) => this.handleChange(el,e)}
+                      defaultValue=""
+                    >
+                      <option value="">-- Select -- </option>
+                      {
+                        this.state[el] === null ? null : this.state[el].map((item, i) => {
+                          return <option key={i} value={item}>{item}</option>
+                        })
+                      }
+                    </select>
+                  </div>
+                )
+              })
+            }
+
+
+          </fieldset>
+          <button disabled={this.state.selectedVehicleID === null}>Submit</button>
         </form>
         <div>
           <p>Miles/year: {this.state.miles}</p>
