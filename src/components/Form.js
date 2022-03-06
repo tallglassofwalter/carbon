@@ -51,6 +51,9 @@ class Form extends React.Component {
               model: null,
               selectedModel: null,
               options: null,
+              selectedOption: null,
+              avgMPG: null,
+              miles: null,
               carbonFootprint: null,
               error: null
             });
@@ -73,9 +76,12 @@ class Form extends React.Component {
 
             this.setState({
               selectedMake: make,
-              model,
+              model: null,
               selectedModel: null,
               options: null,
+              selectedOption: null,
+              avgMPG: null,
+              miles: null,
               carbonFootprint: null,
               error: null
             });
@@ -100,7 +106,10 @@ class Form extends React.Component {
 
             this.setState({
               selectedModel: model,
-              options,
+              options: null,
+              selectedOption: null,
+              avgMPG: null,
+              miles: null,
               carbonFootprint: null,
               error: null
             });
@@ -116,11 +125,12 @@ class Form extends React.Component {
             .then((res) => this.handleErrors(res))
             .then((res) => {
               const data = new DOMParser().parseFromString(res, 'application/xml');
-              console.log(data.childNodes)
               const avgMPG = data.childNodes[0].childNodes[0].innerHTML;
   
               this.setState({
+                selectedOption: vehicle,
                 avgMPG,
+                miles: null,
                 carbonFootprint: null,
                 error: null
               });
@@ -138,6 +148,9 @@ class Form extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
+    let carbon = (this.state.miles / this.state.avgMPG) * 8887;
+    carbon = carbon.toFixed(2);
+    this.setState({ carbonFootprint: carbon });
   }
 
   render() {
@@ -161,9 +174,9 @@ class Form extends React.Component {
             </div>
 
             {
-              ['year', 'make', 'model'].map((el, i) => {
+              ['year', 'make', 'model'].map((el) => {
                 return (
-                  <div className="form__select" key={i}>
+                  <div className="form__select" key={el}>
                     <label htmlFor={el}>{el}: </label>
                     <select
                       name={el}
@@ -174,8 +187,8 @@ class Form extends React.Component {
                     >
                       <option value="">-- Select -- </option>
                       {
-                        this.state[el] === null ? null : this.state[el].map((item, i) => {
-                          return <option key={i} value={item}>{item}</option>
+                        this.state[el] === null ? null : this.state[el].map((item) => {
+                          return <option key={item} value={item}>{item}</option>
                         })
                       }
                     </select>
@@ -195,20 +208,20 @@ class Form extends React.Component {
               >
                 <option value="">-- Select -- </option>
                 {
-                  this.state.options === null ? null : this.state.options.map((item, i) => {
-                    return <option key={i} value={Object.values(item)[0]}>{Object.keys(item)[0]}</option>
+                  this.state.options === null ? null : this.state.options.map((item) => {
+                    return <option key={Object.keys(item)[0]} value={Object.values(item)[0]}>{Object.keys(item)[0]}</option>
                   })
                 }
               </select>
             </div>
             
           </fieldset>
-          <button disabled={this.state.selectedVehicleID === null}>Submit</button>
+          <button disabled={this.state.selectedOption === null}>Submit</button>
         </form>
         <div>
           <p>Miles/year: {this.state.miles}</p>
           <p>Miles per gallon (MPG): {this.state.avgMPG ? this.state.avgMPG : null}</p>
-          <p>Carbon Footprint: {this.state.carbonFootprint ? this.state.carbonFootprint + 'g CO2' : null}</p>
+          <p>Carbon Footprint: {this.state.carbonFootprint ? this.state.carbonFootprint + 'g CO2 per year' : null}</p>
         </div>
       </div>
     );
