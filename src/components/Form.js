@@ -4,7 +4,16 @@ class Form extends React.Component {
   constructor() {
     super();
     this.state = {
-      year: ['2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999', '1998', '1997', '1996', '1995', '1994', '1993', '1992', '1991', '1990', '1989', '1988', '1987', '1986', '1985', '1984'],
+      year: [
+        '2023', '2022', '2021', '2020', '2019', 
+        '2018', '2017', '2016', '2015', '2014',
+        '2013', '2012', '2011', '2010', '2009',
+        '2008', '2007', '2006', '2005', '2004',
+        '2003', '2002', '2001', '2000', '1999',
+        '1998', '1997', '1996', '1995', '1994',
+        '1993', '1992', '1991', '1990', '1989',
+        '1988', '1987', '1986', '1985', '1984'
+      ],
       selectedYear: null,
       make: null,
       selectedMake: null,
@@ -34,10 +43,12 @@ class Form extends React.Component {
     if (e.target.value) {
       if (el === 'year') {
         const year = e.target.value;
-        return fetch(`https://www.fueleconomy.gov/ws/rest/vehicle/menu/make?year=${year}`, { method: 'GET' })
+        return fetch(`https://www.fueleconomy.gov/ws/rest/vehicle/menu/make?year=${year}`,
+            { method: 'GET' })
           .then((res) => this.handleErrors(res))
           .then((res) => {
-            const data = new DOMParser().parseFromString(res, 'application/xml');
+            const data = new DOMParser()
+              .parseFromString(res, 'application/xml');
             const make = [];
 
             data.childNodes[0].childNodes.forEach((node) => {
@@ -64,10 +75,12 @@ class Form extends React.Component {
           })
       } else if (el === 'make') {
         const make = e.target.value;
-        return fetch(`https://fueleconomy.gov/ws/rest/vehicle/menu/model?year=${this.state.selectedYear}&make=${make}`, { method: 'GET' })
+        return fetch(`https://fueleconomy.gov/ws/rest/vehicle/menu/model?year=${this.state.selectedYear}&make=${make}`,
+            { method: 'GET' })
           .then((res) => this.handleErrors(res))
           .then((res) => {
-            const data = new DOMParser().parseFromString(res, 'application/xml');
+            const data = new DOMParser()
+              .parseFromString(res, 'application/xml');
             const model = [];
 
             data.childNodes[0].childNodes.forEach((node) => {
@@ -92,7 +105,8 @@ class Form extends React.Component {
           })
       } else if (el === 'model') {
         const model = e.target.value;
-        return fetch(`https://fueleconomy.gov/ws/rest/vehicle/menu/options?year=${this.state.selectedYear}&make=${this.state.selectedMake}&model=${model}`, { method: 'GET' })
+        return fetch(`https://fueleconomy.gov/ws/rest/vehicle/menu/options?year=${this.state.selectedYear}&make=${this.state.selectedMake}&model=${model}`,
+            { method: 'GET' })
           .then((res) => this.handleErrors(res))
           .then((res) => {
             const data = new DOMParser().parseFromString(res, 'application/xml');
@@ -121,7 +135,8 @@ class Form extends React.Component {
         } else if (el === 'options') {
           const vehicle = e.target.value;
           
-          return fetch(`https://fueleconomy.gov/ws/rest/ympg/shared/ympgVehicle/${vehicle}`, { method: 'GET' })
+          return fetch(`https://fueleconomy.gov/ws/rest/ympg/shared/ympgVehicle/${vehicle}`,
+              { method: 'GET' })
             .then((res) => this.handleErrors(res))
             .then((res) => {
               const data = new DOMParser().parseFromString(res, 'application/xml');
@@ -148,6 +163,8 @@ class Form extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
+    // the rate of 8887 g CO2 emitted per gallon of gasoline was
+    // taken from the EPA website
     let carbon = (this.state.miles / this.state.avgMPG) * 8887;
     carbon = carbon.toFixed(2);
     this.setState({ carbonFootprint: carbon });
@@ -209,7 +226,14 @@ class Form extends React.Component {
                 <option value="">-- Select -- </option>
                 {
                   this.state.options === null ? null : this.state.options.map((item) => {
-                    return <option key={Object.keys(item)[0]} value={Object.values(item)[0]}>{Object.keys(item)[0]}</option>
+                    return (
+                      <option 
+                        key={Object.keys(item)[0]}
+                        value={Object.values(item)[0]}
+                      >
+                        {Object.keys(item)[0]}
+                      </option>
+                    )
                   })
                 }
               </select>
@@ -218,10 +242,15 @@ class Form extends React.Component {
           </fieldset>
           <button disabled={this.state.selectedOption === null}>Submit</button>
         </form>
-        <div>
+        <div className="results">
           <p>Miles/year: {this.state.miles}</p>
           <p>Miles per gallon (MPG): {this.state.avgMPG ? this.state.avgMPG : null}</p>
-          <p>Carbon Footprint: {this.state.carbonFootprint ? this.state.carbonFootprint + 'g CO2 per year' : null}</p>
+          <p>Carbon Footprint: {
+            this.state.carbonFootprint ?
+              this.state.carbonFootprint + 'g CO2 per year' :
+              null
+            }
+          </p>
         </div>
       </div>
     );

@@ -1,6 +1,8 @@
 # carbon footprint calculator
 
-## Links
+A site that calculates the yearly carbon footprint of vehicles. 
+
+## Built With
 
 - [FuelEconomy.gov Web Services](https://fueleconomy.gov/feg/ws)
-- [EPAy](https://www.epa.gov/greenvehicles/greenhouse-gas-emissions-typical-passenger-vehicle)
+- [EPA](https://www.epa.gov/greenvehicles/greenhouse-gas-emissions-typical-passenger-vehicle)
