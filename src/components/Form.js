@@ -89,7 +89,7 @@ class Form extends React.Component {
 
             this.setState({
               selectedMake: make,
-              model: null,
+              model,
               selectedModel: null,
               options: null,
               selectedOption: null,
@@ -120,7 +120,7 @@ class Form extends React.Component {
 
             this.setState({
               selectedModel: model,
-              options: null,
+              options,
               selectedOption: null,
               avgMPG: null,
               miles: null,
@@ -132,7 +132,7 @@ class Form extends React.Component {
             console.error(err);
             this.setState({ error: 'This selection did not return any data.' });
           })
-        } else if (el === 'options') {
+      } else if (el === 'options') {
           const vehicle = e.target.value;
           
           return fetch(`https://fueleconomy.gov/ws/rest/ympg/shared/ympgVehicle/${vehicle}`,
@@ -158,16 +158,19 @@ class Form extends React.Component {
         this.setState({ miles: e.target.value })
       }
     }
-
+    console.log(this.state, 'this.state')
   }
 
   handleSubmit(e) {
     e.preventDefault();
     // the rate of 8887 g CO2 emitted per gallon of gasoline was
     // taken from the EPA website
-    let carbon = (this.state.miles / this.state.avgMPG) * 8887;
-    carbon = carbon.toFixed(2);
-    this.setState({ carbonFootprint: carbon });
+    
+    if (!this.state.error) {
+      let carbon = (this.state.miles / this.state.avgMPG) * 8887;
+      carbon = carbon.toFixed(2);
+      this.setState({ carbonFootprint: carbon });
+    }
   }
 
   render() {
@@ -240,13 +243,13 @@ class Form extends React.Component {
             </div>
             
           </fieldset>
-          <button disabled={this.state.selectedOption === null}>Submit</button>
+          <button disabled={!this.state.miles && !this.state.avgMPG}>Submit</button>
         </form>
         <div className="results">
           <p>Miles/year: {this.state.miles}</p>
           <p>Miles per gallon (MPG): {this.state.avgMPG ? this.state.avgMPG : null}</p>
           <p>Carbon Footprint: {
-            this.state.carbonFootprint ?
+            this.state.carbonFootprint && !this.state.error ?
               this.state.carbonFootprint + 'g CO2 per year' :
               null
             }
