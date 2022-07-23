@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/carbon/static/css/main.6161d185.chunk.css",
+    "main.js": "/carbon/static/js/main.dcd61711.chunk.js",
+    "main.js.map": "/carbon/static/js/main.dcd61711.chunk.js.map",
+    "runtime-main.js": "/carbon/static/js/runtime-main.df1dade7.js",
+    "runtime-main.js.map": "/carbon/static/js/runtime-main.df1dade7.js.map",
+    "static/js/2.9911a96f.chunk.js": "/carbon/static/js/2.9911a96f.chunk.js",
+    "static/js/2.9911a96f.chunk.js.map": "/carbon/static/js/2.9911a96f.chunk.js.map",
+    "static/js/3.cdc090fa.chunk.js": "/carbon/static/js/3.cdc090fa.chunk.js",
+    "static/js/3.cdc090fa.chunk.js.map": "/carbon/static/js/3.cdc090fa.chunk.js.map",
+    "index.html": "/carbon/index.html",
+    "static/css/main.6161d185.chunk.css.map": "/carbon/static/css/main.6161d185.chunk.css.map",
+    "static/js/2.9911a96f.chunk.js.LICENSE.txt": "/carbon/static/js/2.9911a96f.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.df1dade7.js",
+    "static/js/2.9911a96f.chunk.js",
+    "static/css/main.6161d185.chunk.css",
+    "static/js/main.dcd61711.chunk.js"
+  ]
+}
